@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CubeFactory - Login</title>
+    <link rel="stylesheet" href="./styles/login.css">
+
+    <!-- Oswald & Roboto Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h1 class="logo">CubeFactory</h1>
+            <h2 class="login-now">Login to Your Account</h2>
+            <p class="welcome-back">Welcome back! Please enter your details.</p>
+            <button class="google-login">
+                <img src="./assets/google-icon.png" alt="Google Logo" class="google-icon">
+                Login with Google
+            </button>
+            <div class="separator">or</div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="email">Email address</label>
+                    <input type="email" id="email" name="email" placeholder="Email address" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-button">Login</button>
+                <p class="signup-link">Don't have an account? <a href="../signup/signup.html">Sign up</a></p>
+            </form>
+        </div>
+        <div class="promo-box">
+            <h2>Join us and explore new possibilities.</h2>
+            <p>Sign up for free and enjoy access to all features for 30 days. No credit card required.</p>
+        </div>
+    </div>
+    <script src="./scripts/login.js"></script>
+</body>
+</html>

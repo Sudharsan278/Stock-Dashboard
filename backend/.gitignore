@@ -1,0 +1,10 @@
+/.metadata/
+Servers/
+.vscode/
+bin/
+target/
+lib/
+*.jar
+.classpath
+.project
+.settings/
