@@ -4,14 +4,24 @@ document.getElementById("loginForm").addEventListener("submit", function(event) 
     let email = document.getElementById("email").value;
     let password = document.getElementById("password").value;
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-
-    let validUser = users.find(user => user.email === email && user.password === password);
-
-    if (validUser) {
-        alert("Login successful!");
-        window.location.href = "../home/home.html"; 
-    } else {
-        alert("Invalid email or password. Please try again.");
-    }
+    fetch("http://localhost:8080/StockDashboard/LoginServlet", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Login successful!");
+            window.location.href = "home.html";
+        } else {
+            alert("Invalid email or password. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("Something went wrong. Please try again later.");
+    });
 });
