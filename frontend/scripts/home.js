@@ -1,18 +1,26 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const stockSymbols = ["AAPL", "MSFT", "TSLA", "AMZN", "NVDA"];
+    console.log("Home page loaded, checking cookies...");
 
-    stockSymbols.forEach(symbol => {
-        fetch(`/StockDashboard/StockServlet?symbol=${symbol}`)
-            .then(response => response.json())
-            .then(data => {
-                let stockPrice = data["Global Quote"]["05. price"];
-                let stockChange = data["Global Quote"]["10. change percent"];
+    function getCookie(name) {
+        let cookies = document.cookie.split('; ');
+        for (let cookie of cookies) {
+            let [key, value] = cookie.split('=');
+            if (key === name) return decodeURIComponent(value);
+        }
+        return null;
+    }
 
-                document.querySelector(`.stock-item[data-symbol="${symbol}"] .stock-price`).textContent = `$${parseFloat(stockPrice).toFixed(2)}`;
-                document.querySelector(`.stock-item[data-symbol="${symbol}"] .stock-change`).textContent = stockChange;
-                document.querySelector(`.stock-item[data-symbol="${symbol}"] .stock-change`).classList.toggle("up", parseFloat(stockChange) > 0);
-                document.querySelector(`.stock-item[data-symbol="${symbol}"] .stock-change`).classList.toggle("down", parseFloat(stockChange) < 0);
-            })
-            .catch(error => console.error("Error fetching stock data:", error));
-    });
+    let username = getCookie("username");
+    let email = getCookie("email");
+
+    console.log("Cookies found:", document.cookie);
+
+    if (!username || !email) {
+        console.warn("🔄 No valid cookies found. Redirecting to login...");
+        setTimeout(() => {
+            window.location.href = "login.html";
+        }, 500);
+    } else {
+        console.log("User Authenticated:", { username, email });
+    }
 });
