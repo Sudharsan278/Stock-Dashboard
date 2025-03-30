@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -41,9 +42,10 @@ public class SignupServlet extends HttpServlet {
 
 	 @Override
 	    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	        response.setHeader("Access-Control-Allow-Origin", "*");
+	        response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
 	        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
 	        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+	        response.setHeader("Access-Control-Allow-Credentials", "true");
 	        response.setStatus(HttpServletResponse.SC_OK);
 	    }
 	
@@ -51,11 +53,14 @@ public class SignupServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	 protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	        		 
+			response.setHeader("Access-Control-Allow-Origin", "http://127.0.0.1:5500");
+	        response.setHeader("Access-Control-Allow-Credentials", "true");
+	        response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+	        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+	        response.setContentType("application/json");
 	        
-		 response.setHeader("Access-Control-Allow-Origin", "*"); 
-		    response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-		    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-		    response.setContentType("text/plain");
+	        JSONObject jsonResponse = new JSONObject();
 
 		    try (PrintWriter out = response.getWriter()) {
 		        String email = request.getParameter("email");
@@ -100,25 +105,43 @@ public class SignupServlet extends HttpServlet {
 		                int rowsAffected = stm.executeUpdate();
 		                if (rowsAffected > 0) {
 		                    // Create cookies for user details
-		                    Cookie nameCookie = new Cookie("username", name);
-		                    Cookie emailCookie = new Cookie("useremail", email);
 
-		                    // Set cookie expiration time (e.g., 1 day)
-		                    nameCookie.setMaxAge(24 * 60 * 60);
-		                    emailCookie.setMaxAge(24 * 60 * 60);
+		                	Cookie userCookie = new Cookie("username", name);
+		                	userCookie.setMaxAge(60 * 60 * 2);
+		                	userCookie.setPath("/");
+		                	userCookie.setDomain("127.0.0.1");
+		                	userCookie.setHttpOnly(false);
+		                	userCookie.setSecure(false);
+		                	userCookie.setComment("SameSite=None");
 
-		                    // Secure cookies (optional, remove for development)
-		                    nameCookie.setHttpOnly(true);
-		                    emailCookie.setHttpOnly(true);
+		                	Cookie emailCookie = new Cookie("email", email);
+		                	emailCookie.setMaxAge(60 * 60 * 2);
+		                	emailCookie.setPath("/");
+		                	emailCookie.setDomain("127.0.0.1");
+		                	emailCookie.setHttpOnly(false);
+		                	emailCookie.setSecure(false);
+		                	emailCookie.setComment("SameSite=None");
+		                	
+		                	response.addCookie(userCookie);
+		                	response.addCookie(emailCookie);
+		                	
+		                	jsonResponse.put("success", true);
+		                	jsonResponse.put("username", name);
+		                	jsonResponse.put("email", email);
 
-		                    // Add cookies to the response
-		                    response.addCookie(nameCookie);
-		                    response.addCookie(emailCookie);
+		                	System.out.println("Cookie: - " + userCookie.getValue());
+		                	System.out.println("Cookie" + userCookie.getMaxAge());
+		                	System.out.println("Cookie: - " + emailCookie.getValue());
 
-		                    out.write("success");
+		                	System.out.println("123" + jsonResponse.toString());
+		                	
+		                	out.print(jsonResponse.toString());
+
 		                } else {
-		                    out.write("failure");
+ 	                        jsonResponse.put("failure", true);
+		                	out.print(jsonResponse.toString());
 		                }
+		                
 		            }
 		        } catch (SQLException ex) {
 		            ex.printStackTrace();

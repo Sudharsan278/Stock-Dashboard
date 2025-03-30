@@ -6,7 +6,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
     let response = await fetch("http://127.0.0.1:8080/StockDashboard/LoginServlet", {
         method: "POST",
-        credentials: "include",  
+        credentials: "include",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
     });

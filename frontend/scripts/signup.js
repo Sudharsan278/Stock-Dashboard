@@ -49,16 +49,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         fetch("http://localhost:8080/StockDashboard/SignupServlet", {
             method: "POST",
+            credentials : "include",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            body: `name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
         })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            if (data.trim() === "success") {
+
+            console.log("Response data:", data);  
+
+            if (data.success === true) {
                 alert("Signup Successful!");
-                window.location.href = "home.html";
+                window.location.href = "login.html";
             } else {
                 alert("Signup Failed! The email might already exist or there was an error.");
             }

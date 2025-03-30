@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realtime Stock Dashboard</title>
-    <link rel="stylesheet" href="./styles/home.css">
+    <link rel="stylesheet" href="home.css">
 </head>
 
 
@@ -15,10 +15,10 @@
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
-                <li><a href="Dashboard.html">Dashboard</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="http://localhost:8080/StockDashboard/portfolio.jsp">Portfolio</a></li>
-                <li><button id="logoutBtn" class="btn">Logout</button></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="http://localhost:8080/StockJSP/about.jsp">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="../login/login.html" class="btn">Login</a></li>
             </ul>
         </div>
     </nav>
@@ -115,11 +115,58 @@
                     <div class="watchlist">
                         <h3>Watchlist</h3>
                         <div class="stock-list">
-                           
-                            
+                            <div class="stock-item">
+                                <div class="stock-info">
+                                    <span class="stock-name">Apple Inc</span>
+                                    <span class="stock-symbol">AAPL</span>
+                                </div>
+                                <div class="stock-data">
+                                    <div class="stock-price">$182.63</div>
+                                    <div class="stock-change up">+1.24%</div>
+                                </div>
+                            </div>
+                            <div class="stock-item">
+                                <div class="stock-info">
+                                    <span class="stock-name">Microsoft</span>
+                                    <span class="stock-symbol">MSFT</span>
+                                </div>
+                                <div class="stock-data">
+                                    <div class="stock-price">$402.78</div>
+                                    <div class="stock-change up">+0.86%</div>
+                                </div>
+                            </div>
+                            <div class="stock-item">
+                                <div class="stock-info">
+                                    <span class="stock-name">Tesla Inc</span>
+                                    <span class="stock-symbol">TSLA</span>
+                                </div>
+                                <div class="stock-data">
+                                    <div class="stock-price">$217.56</div>
+                                    <div class="stock-change down">-1.32%</div>
+                                </div>
+                            </div>
+                            <div class="stock-item">
+                                <div class="stock-info">
+                                    <span class="stock-name">Amazon</span>
+                                    <span class="stock-symbol">AMZN</span>
+                                </div>
+                                <div class="stock-data">
+                                    <div class="stock-price">$178.92</div>
+                                    <div class="stock-change up">+0.74%</div>
+                                </div>
+                            </div>
+                            <div class="stock-item">
+                                <div class="stock-info">
+                                    <span class="stock-name">Nvidia</span>
+                                    <span class="stock-symbol">NVDA</span>
+                                </div>
+                                <div class="stock-data">
+                                    <div class="stock-price">$124.32</div>
+                                    <div class="stock-change up">+2.15%</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -144,6 +191,6 @@
         </div>
     </footer>
 
-    <script src="./scripts/home.js"></script>
+    <script src="home.js"></script>
 </body>
 </html>

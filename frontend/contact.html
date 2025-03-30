@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+</head>
+<body>
+
+    <div class="contact-container">
+        <h2>Contact Us</h2>
+        <p>Have any queries? Feel free to reach out!</p>
+
+        <form id="contact-form">
+            <div class="input-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="input-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Type your message" required></textarea>
+            </div>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <p id="response-message"></p>
+    </div>
+
+    <script>
+        document.getElementById("contact-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+    
+            const formData = new URLSearchParams();
+            formData.append("name", document.getElementById("name").value);
+            formData.append("email", document.getElementById("email").value);
+            formData.append("message", document.getElementById("message").value);
+    
+            fetch("contact.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData
+            })
+            .then(response => response.text())  // Read raw response as text
+            .then(text => {
+                console.log("Server Response:", text); // Log full response for debugging
+                return JSON.parse(text); // Parse JSON
+            })
+            .then(data => {
+                document.getElementById("response-message").textContent = data.message;
+                if (data.status === "success") {
+                    document.getElementById("contact-form").reset();
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>    
+
+</body>
+</html>
