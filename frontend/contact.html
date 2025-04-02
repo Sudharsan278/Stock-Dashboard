@@ -4,33 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Us</title>
+    <link rel="stylesheet" href="styles/contact.css">
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">StockPro</a>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="Dashboard.html">Dashboard</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="http://localhost:8080/StockDashboard/portfolio.jsp">Portfolio</a></li>
+                <li><button id="logoutBtn" class="btn">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
 
-    <div class="contact-container">
-        <h2>Contact Us</h2>
-        <p>Have any queries? Feel free to reach out!</p>
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1>Contact Us</h1>
+            <p>We'd love to hear from you. Get in touch with our team.</p>
+        </div>
+    </div>
 
-        <form id="contact-form">
-            <div class="input-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+    <div class="container">
+        <!-- Contact Form Section -->
+        <div class="contact-container">
+            <h2>Send us a message</h2>
+            <p>Have any questions or feedback? Fill out the form below and we'll get back to you as soon as possible.</p>
+
+            <form id="contact-form" class="contact-form">
+                <div class="input-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+                </div>
+
+                <button type="submit">Submit Message</button>
+            </form>
+
+            <div id="response-message"></div>
+        </div>
+
+        <!-- Contact Info Section -->
+        <div class="contact-info">
+            <div class="info-card">
+                <h3>Email</h3>
+                <p>contact@myportfolio.com</p>
             </div>
-
-            <div class="input-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+            <div class="info-card">
+                <h3>Phone</h3>
+                <p>+1 (555) 123-4567</p>
             </div>
-
-            <div class="input-group">
-                <label for="message">Message</label>
-                <textarea id="message" name="message" placeholder="Type your message" required></textarea>
+            <div class="info-card">
+                <h3>Location</h3>
+                <p>123 Financial District, New York, NY 10001</p>
             </div>
-
-            <button type="submit">Submit</button>
-        </form>
-
-        <p id="response-message"></p>
+        </div>
     </div>
 
     <script>
@@ -52,17 +94,28 @@
             .then(response => response.text())  // Read raw response as text
             .then(text => {
                 console.log("Server Response:", text); // Log full response for debugging
-                return JSON.parse(text); // Parse JSON
+                try {
+                    return JSON.parse(text); // Parse JSON
+                } catch (e) {
+                    throw new Error("Invalid server response");
+                }
             })
             .then(data => {
-                document.getElementById("response-message").textContent = data.message;
+                const responseEl = document.getElementById("response-message");
+                responseEl.textContent = data.message;
+                responseEl.className = data.status === "success" ? "success" : "error";
+                
                 if (data.status === "success") {
                     document.getElementById("contact-form").reset();
                 }
             })
-            .catch(error => console.error("Error:", error));
+            .catch(error => {
+                console.error("Error:", error);
+                const responseEl = document.getElementById("response-message");
+                responseEl.textContent = "An error occurred. Please try again later.";
+                responseEl.className = "error";
+            });
         });
-    </script>    
-
+    </script>
 </body>
 </html>
