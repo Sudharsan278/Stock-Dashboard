@@ -1,12 +1,11 @@
+import { API_KEY } from "./config.js";
 let stockChartInstance = null;
 let currentSymbol = '';
 let currentRange = '1M';
 let chartType = 'line';
-const apiKey = 'HlGhMMSsZPebhgG9r1TIDaXqN_os_kDF'; 
 
-// Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    // Set up event listeners
+    console.log("Hi")
     document.getElementById('searchBtn').addEventListener('click', fetchStockData);
     document.getElementById('stockSymbol').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') fetchStockData();
@@ -22,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Chart type buttons
+   
     document.querySelectorAll('.chart-type .time-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             document.querySelectorAll('.chart-type .time-btn').forEach(b => b.classList.remove('active'));
@@ -32,13 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Add to watchlist button
+    //  Watchlist 
     document.getElementById('addToWatchlist').addEventListener('click', function() {
         if (!currentSymbol) return;
         addToWatchlist(currentSymbol, document.getElementById('currentPrice').textContent);
     });
     
-    // Pre-fill with a sample stock
     document.getElementById('stockSymbol').value = 'AAPL';
     fetchStockData();
 });
@@ -52,6 +50,7 @@ function hideLoader() {
 }
 
 async function fetchStockData() {
+    
     const symbol = document.getElementById('stockSymbol').value.toUpperCase();
     if (!symbol) return;
     
@@ -59,7 +58,7 @@ async function fetchStockData() {
     showLoader();
     
     try {
-        // Calculate date range based on selection
+        
         const endDate = new Date();
         let startDate = new Date();
         
@@ -87,7 +86,7 @@ async function fetchStockData() {
         const startDateStr = formatDate(startDate);
         const endDateStr = formatDate(endDate);
         
-        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${startDateStr}/${endDateStr}?apiKey=${apiKey}`);
+        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${startDateStr}/${endDateStr}?apiKey=${API_KEY}`);
         const data = await response.json();
         
         if (!data.results || data.results.length === 0) {
@@ -100,7 +99,6 @@ async function fetchStockData() {
         renderChart(data);
         document.getElementById('stockInfo').style.display = 'block';
         
-        // Update key statistics with some calculated values
         updateKeyStats(data);
         
     } catch (error) {
@@ -137,13 +135,12 @@ function updateStockInfo(data) {
 }
 
 function updateKeyStats(data) {
-    // Calculate some mock statistics based on the data we have
+    
     const latestPrice = data.results[data.results.length - 1].c;
     const allPrices = data.results.map(item => item.c);
     const highestPrice = Math.max(...allPrices).toFixed(2);
     const lowestPrice = Math.min(...allPrices).toFixed(2);
     
-    // Mock values for demonstration
     const mockMarketCap = (latestPrice * 10000000).toFixed(0);
     const mockPE = (Math.random() * 30 + 10).toFixed(2);
     
@@ -167,7 +164,7 @@ function renderChart(data) {
     const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color') || '#4a6cff';
 
     
-    // Create dataset based on chart type
+    // Creating a dataset based on chart type
     let dataset;
     if (chartType === 'line') {
         dataset = {
@@ -181,7 +178,7 @@ function renderChart(data) {
             pointHoverRadius: 5
         };
     } else {
-        // For candlestick chart, we simulate with extra data
+        // CandleStick chart 
         dataset = {
             label: `${currentSymbol} Price`,
             data: prices,
@@ -249,7 +246,6 @@ function renderChart(data) {
 function addToWatchlist(symbol, price) {
     const watchlistContainer = document.getElementById('watchlistContainer');
     
-    // Check if already in watchlist
     const existingItems = watchlistContainer.querySelectorAll('.stock-name');
     for (let item of existingItems) {
         if (item.textContent === symbol) {
