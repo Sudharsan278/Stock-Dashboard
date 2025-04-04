@@ -4,6 +4,8 @@ let currentSymbol = '';
 let currentRange = '1M';
 let chartType = 'line';
 
+console.log(API_KEY)
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Hi")
     document.getElementById('searchBtn').addEventListener('click', fetchStockData);

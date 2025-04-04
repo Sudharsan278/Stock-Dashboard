@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<watchlist>
+    <stock>
+        <symbol>AAPL</symbol>
+        <name>Apple Inc.</name>
+        <price>178.20</price>
+    </stock>
+    <stock>
+        <symbol>GOOGL</symbol>
+        <name>Alphabet Inc.</name>
+        <price>2843.66</price>
+    </stock>
+    <stock>
+        <symbol>MSFT</symbol>
+        <name>Microsoft Corporation</name>
+        <price>334.75</price>
+    </stock>
+</watchlist>

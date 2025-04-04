@@ -31,6 +31,32 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("email-display").textContent = email;
         }
     }
+
+
+    fetch("http://localhost/StockDashboard/fetchXMLData.php")
+        .then((response) => response.json())
+        .then((data) => {
+            const stockList = document.querySelector(".stock-list");
+            
+            if (data.error) {
+                stockList.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                return;
+            }
+
+            data.forEach(stock => {
+                const stockCard = document.createElement("div");
+                stockCard.className = "stock-card";
+                stockCard.innerHTML = `
+                    <h4>${stock.symbol} - ${stock.name}</h4>
+                    <p>Price: $${stock.price.toFixed(2)}</p>
+                `;
+                stockList.appendChild(stockCard);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading watchlist:", error);
+        });
+
 });
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
