@@ -16,6 +16,10 @@ document.getElementById("loginForm").addEventListener("submit", async function (
 
     if (data.success) {
         alert("Login successful!");
+        console.log(data);
+        localStorage.setItem("username", data.username);
+        localStorage.setItem("email", data.email);
+        localStorage.setItem("loginTime", data.loginTime);
         window.location.href = "home.html";
     } else {
         alert("Login failed: " + data.message);

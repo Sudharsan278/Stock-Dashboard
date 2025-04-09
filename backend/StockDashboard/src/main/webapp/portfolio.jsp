@@ -13,7 +13,7 @@
 </head>
 <body>
     <%
-    // Get stocks from session
+    
     @SuppressWarnings("unchecked")
     List<Stock> stocks = (List<Stock>) session.getAttribute("stocks");
     if (stocks == null) {
@@ -38,6 +38,7 @@
                 <li><a href="http://localhost/StockDashboard/contact.php">Contact</a></li>
                 <li><a href="http://localhost:8080/StockDashboard/portfolio.jsp">Portfolio</a></li>
                 <li><button id="logoutBtn" class="btn">Logout</button></li>
+                
             </ul>
         </div>
     </nav>

@@ -57,6 +57,58 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Error loading watchlist:", error);
         });
 
+        const loginTime = localStorage.getItem("loginTime");
+
+
+        if (username) {
+            document.getElementById("username-display").textContent = username;
+            // Set initials in the avatar
+            const initials = username.split(' ')
+                .map(name => name[0])
+                .join('')
+                .toUpperCase()
+                .substring(0, 2);
+            document.getElementById("user-avatar").textContent = initials;
+        } else {
+            document.getElementById("username-display").textContent = "Guest User";
+            document.getElementById("user-avatar").textContent = "GU";
+        }
+        
+        if (email) {
+            document.getElementById("email-display").textContent = email;
+        } else {
+            document.getElementById("email-display").textContent = "Not available";
+        }
+        
+        if (loginTime) {
+            // Format login time nicely
+            try {
+                const loginDate = new Date(loginTime);
+                document.getElementById("login-time").textContent = loginDate.toLocaleString();
+            } catch (e) {
+                document.getElementById("login-time").textContent = loginTime;
+            }
+        } else {
+            document.getElementById("login-time").textContent = "Not available";
+        }
+        
+        // Toggle user dropdown
+        const userAvatar = document.getElementById("user-avatar");
+        const userDropdown = document.getElementById("user-dropdown");
+        
+        userAvatar.addEventListener("click", function() {
+            userDropdown.classList.toggle("active");
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function(event) {
+            if (!userAvatar.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.classList.remove("active");
+            }
+        });
+        
+
+
 });
 
 document.getElementById("logoutBtn").addEventListener("click", () => {
@@ -93,4 +145,3 @@ function deleteAllCookies() {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     }
 }
-

@@ -12,6 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
@@ -66,6 +67,12 @@ public class LoginServlet extends HttpServlet {
             	   if (BCrypt.checkpw(password, hashedPassword)) {
                        String username = rs.getString("NAME");
                        
+                       
+                       HttpSession session = request.getSession();
+                       session.setAttribute("username", username);
+                       session.setAttribute("email",email);
+                       session.setAttribute("loginTime",java.time.LocalDateTime.now().toString());
+                       
                        Cookie userCookie = new Cookie("username", username);
                        userCookie.setMaxAge(60 * 60 * 2);
                        userCookie.setPath("/");
@@ -89,6 +96,7 @@ public class LoginServlet extends HttpServlet {
                        jsonResponse.put("success", true);
                        jsonResponse.put("username", username);
                        jsonResponse.put("email", email);
+                       jsonResponse.put("loginTime", session.getAttribute("loginTime"));
 
                        
             	   }else {

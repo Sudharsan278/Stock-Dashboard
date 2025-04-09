@@ -522,3 +522,72 @@ section > p {
     background: #dfdddd;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
+.user-profile {
+    position: relative;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: #3b82f6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 45px;
+    right: 0;
+    width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    z-index: 100;
+    display: none;
+}
+
+.user-dropdown.active {
+    display: block;
+}
+
+.user-dropdown h4 {
+    margin: 0 0 4px 0;
+    color: #000000;
+    font-size: 1.1rem;
+}
+
+.user-info {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.user-info p {
+    margin: 5px 0;
+    color: rgb(85, 83, 83);
+    font-size: 0.9rem;
+}
+
+.login-time {
+    font-size: 0.8rem;
+    color: rgb(85, 83, 83);
+    margin-top: 8px;
+}
+
+.user-welcome {
+    padding: 10px;
+    background-color: #f3f4f6;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #1f2937;
+}

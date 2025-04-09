@@ -4,10 +4,8 @@ $username = "root";
 $password = "2782004";
 $dbname = "stock_dashboard";
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -52,6 +50,7 @@ $conn->close();
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="Dashboard.html">Dashboard</a></li>
+                <li><a href="">Market News</a></li>
                 <li><a href="contact.php">Contact</a></li>
                 <li><a href="http://localhost:8080/StockDashboard/portfolio.jsp">Portfolio</a></li>
                 <li><button id="logoutBtn" class="btn">Logout</button></li>
@@ -81,7 +80,6 @@ $conn->close();
             </div>
         <?php endif; ?>
 
-        <!-- Contact Form Section -->
         <div class="contact-container">
             <h2>Send us a message</h2>
             <p>Have questions about our services or need assistance with your account? Drop us a message.</p>
