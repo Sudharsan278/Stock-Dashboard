@@ -50,10 +50,9 @@ $conn->close();
                 <li><a href="#home">Home</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="Dashboard.html">Dashboard</a></li>
-                <li><a href="">Market News</a></li>
+                <li><a href="http://127.0.0.1:5500/frontend/news.html">Market News</a></li>
                 <li><a href="contact.php">Contact</a></li>
                 <li><a href="http://localhost:8080/StockDashboard/portfolio.jsp">Portfolio</a></li>
-                <li><button id="logoutBtn" class="btn">Logout</button></li>
             </ul>
         </div>
     </nav>

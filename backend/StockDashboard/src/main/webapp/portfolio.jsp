@@ -36,9 +36,7 @@
                 <li><a href="http://127.0.0.1:5500/frontend/home.html#features">Features</a></li>
                 <li><a href="http://127.0.0.1:5500/frontend/Dashboard.html">Dashboard</a></li>
                 <li><a href="http://localhost/StockDashboard/contact.php">Contact</a></li>
-                <li><a href="http://localhost:8080/StockDashboard/portfolio.jsp">Portfolio</a></li>
-                <li><button id="logoutBtn" class="btn">Logout</button></li>
-                
+                <li><a href="http://localhost:8080/StockDashboard/portfolio.jsp">Portfolio</a></li>                
             </ul>
         </div>
     </nav>
