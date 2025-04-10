@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Market News | Financial Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles/news.css">
+    <title>Financial News Dashboard</title>
+    <link rel="stylesheet" href="./styles/news.css">
 </head>
 <body>
-
     <nav class="navbar">
         <div class="container">
-            <a href="index.html" class="logo">FinanceTrack</a>
+            <a href="#" class="logo">StockPro</a>
             <ul class="nav-links">
                 <li><a href="home.html">Home</a></li>
-                <li><a href="home.html">Features</a></li>
+                <li><a href="home.html#Features">Features</a></li>
                 <li><a href="Dashboard.html">Dashboard</a></li>
                 <li><a href="news.html">Market News</a></li>
                 <li><a href="http://localhost/StockDashboard/contact.php">Contact</a></li>
@@ -22,60 +20,30 @@
             </ul>
         </div>
     </nav>
-
-    <!-- Market News Header -->
-    <header class="market-news-header">
-        <div class="container">
-            <h1>Market News</h1>
-            <p>Stay informed with the latest financial news and market updates from trusted sources around the globe.</p>
-        </div>
-    </header>
-
-    <!-- Market News Content -->
-    <section class="market-news-content">
-        <div class="container">
-            <div class="news-filters">
-                <div class="news-filters-left">
-                    <button class="filter-btn active" data-category="all">All News</button>
-                    <button class="filter-btn" data-category="markets">Markets</button>
-                    <button class="filter-btn" data-category="stocks">Stocks</button>
-                    <button class="filter-btn" data-category="economy">Economy</button>
-                    <button class="filter-btn" data-category="crypto">Crypto</button>
-                </div>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="news-search" placeholder="Search by ticker or keyword...">
-                </div>
+    <div class="dashboard-container">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Latest Financial News</h2>
             </div>
-
-            <div id="news-container" class="news-grid">
-                <!-- News items will be loaded here -->
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search news articles...">
             </div>
-
-            <div class="loading-spinner" id="loading-spinner">
+            
+            <div class="filter-bar">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="crypto">Crypto</button>
+                <button class="filter-btn" data-filter="stocks">Stocks</button>
+                <button class="filter-btn" data-filter="forex">Forex</button>
+            </div>
+            
+            <div id="loader" class="loader">
                 <div class="spinner"></div>
             </div>
-
-            <div class="no-results" id="no-results" style="display: none;">
-                <i class="fas fa-newspaper" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;"></i>
-                <h3>No news found</h3>
-                <p>Try adjusting your search or filter criteria.</p>
-            </div>
-
-            <button id="load-more-btn" class="load-more">Load More</button>
+            
+            <div id="newsGrid" class="news-grid"></div>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 FinanceTrack. All rights reserved.</p>
-            <div>
-                <a href="#" style="color: white; margin-right: 15px; text-decoration: none;">Privacy Policy</a>
-                <a href="#" style="color: white; text-decoration: none;">Terms of Service</a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="scripts/news.js" type="module"></script>
+    </div>
+    <script src="./scripts/news.js" type="module"></script>
 </body>
+</html>
