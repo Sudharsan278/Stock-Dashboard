@@ -149,38 +149,38 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     
-    // Fetch news data from Alpha Vantage API
     function fetchNews() {
         loader.style.display = 'flex';
         newsGrid.innerHTML = '';
-        
-        // Alpha Vantage API endpoint with parameters
+    
         const apiUrl = `https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=COIN,CRYPTO:BTC,FOREX:USD&timefrom=20220410T0130&limit=1000&apikey=${NEWS_KEY}`;
-        
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data && data.feed && Array.isArray(data.feed) && data.feed.length > 0) {
-                    newsData = data.feed;
-                    renderNews();
-                } else {
-                    newsGrid.innerHTML = '<div class="no-results">No news data available. Please try again later.</div>';
-                    console.warn('API returned invalid data format');
-                }
-            })
-            .catch(error => {
-                newsGrid.innerHTML = '<div class="no-results">Error loading news data. Please try again later.</div>';
-                console.error('Error fetching news:', error);
-            })
-            .finally(() => {
+    
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', apiUrl, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
                 loader.style.display = 'none';
-            });
+    
+                if (xhr.status === 200) {
+                    try {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.feed && Array.isArray(data.feed)) {
+                            newsData = data.feed;
+                            renderNews();
+                        } else {
+                            newsGrid.innerHTML = '<div class="error-message">Invalid news data format.</div>';
+                        }
+                    } catch (e) {
+                        newsGrid.innerHTML = '<div class="error-message">Error parsing the response.</div>';
+                    }
+                } else {
+                    newsGrid.innerHTML = '<div class="error-message">Failed to fetch news. Please try again later.</div>';
+                }
+            }
+        };
+        xhr.send();
     }
+    
     
     // Initialize the app
     fetchNews();
