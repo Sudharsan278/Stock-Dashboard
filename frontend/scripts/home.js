@@ -62,7 +62,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (username) {
             document.getElementById("username-display").textContent = username;
-            // Set initials in the avatar
             const initials = username.split(' ')
                 .map(name => name[0])
                 .join('')
@@ -81,7 +80,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         if (loginTime) {
-            // Format login time nicely
             try {
                 const loginDate = new Date(loginTime);
                 document.getElementById("login-time").textContent = loginDate.toLocaleString();
@@ -92,7 +90,6 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("login-time").textContent = "Not available";
         }
         
-        // Toggle user dropdown
         const userAvatar = document.getElementById("user-avatar");
         const userDropdown = document.getElementById("user-dropdown");
         
@@ -100,187 +97,118 @@ document.addEventListener("DOMContentLoaded", function () {
             userDropdown.classList.toggle("active");
         });
         
-        // Close dropdown when clicking outside
         document.addEventListener("click", function(event) {
             if (!userAvatar.contains(event.target) && !userDropdown.contains(event.target)) {
                 userDropdown.classList.remove("active");
             }
         });
 
-
         const chatbotToggle = document.querySelector('.chatbot-toggle');
-            const chatbotWindow = document.querySelector('.chatbot-window');
-            const chatbotClose = document.querySelector('.chatbot-close');
-            const chatInput = document.getElementById('chat-input');
-            const sendBtn = document.getElementById('send-btn');
-            const messagesContainer = document.querySelector('.chatbot-messages');
-            const suggestionChips = document.querySelectorAll('.suggestion-chip');
+        const chatbotWindow = document.querySelector('.chatbot-window');
+        const chatbotClose = document.querySelector('.chatbot-close');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const messagesContainer = document.querySelector('.chatbot-messages');
+        const suggestionChips = document.querySelectorAll('.suggestion-chip');
+        
+        const CHATBOT_SERVLET_URL = 'http://localhost:8080/StockDashboard/ChatbotServlet';
+        chatbotToggle.addEventListener('click', function() {
+            chatbotWindow.classList.add('active');
+            scrollToBottom();
+        });
+        
+        chatbotClose.addEventListener('click', function() {
+            chatbotWindow.classList.remove('active');
+        });
+        
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message === '') return;
             
-            // Predefined questions and answers
-            const qaPairs = [
-                {
-                    question: "hello",
-                    answer: "Hey there, investor! Ready to conquer the markets today? Let’s track some stocks and ride those trends! 📈"
-                },                
-                {
-                    question: "how to add stocks in portfolio",
-                    answer: "To add stocks in portfolio, go to the Portfolio page and click on the '+ New' button. From there, you can search for stocks and add them to your personalized portfolio. You can add multiple stocks in your respective portfolio for different investment strategies."
-                },
-                {
-                    question: "what markets do you cover",
-                    answer: "StockPro covers all major global markets including NYSE, NASDAQ, LSE, TSE, and 30+ other exchanges. We provide data for stocks, ETFs, mutual funds, indices, forex, and cryptocurrencies."
-                },
-                {
-                    question: "do you offer real-time data",
-                    answer: "Yes! StockPro provides real-time market data with millisecond precision for all premium subscribers. Our Basic plan includes 15-minute delayed quotes, while Premium and Professional plans offer real-time streaming data."
-                },
-                {
-                    question: "how much does it cost",
-                    answer: "StockPro is entirely free to our priviliged users. We take immense proud in offering our service free to all our customers"
-                },
-                {
-                    question: "do you have a mobile app",
-                    answer: "No, Currently that work is in progress.. Currently this website is the only service that we are providing. We'll be launching our app in both play store and app store very soon!."
-                },
-                {
-                    question: "how do i read stock charts",
-                    answer: "Stock charts display price movements over time. In StockPro, you can access different chart types (candlestick, line, OHLC) and add technical indicators by clicking on the 'Indicators' button above any chart. We also offer a comprehensive 'Chart Reading Guide' in our Learning Center."
-                },
-                {
-                    question: "what technical indicators are available",
-                    answer: "StockPro offers 100+ technical indicators including popular ones like Moving Averages, RSI, MACD, Bollinger Bands, and Fibonacci Retracements. Premium users can also create custom indicators using our scripting language."
-                },
-                {
-                    question: "how to set price alerts",
-                    answer: "To set price alerts, navigate to any stock detail page and click the bell icon. You can create alerts based on price movements, percentage changes, volume spikes, or technical indicator crossovers. Alerts can be delivered via email, SMS, or push notifications."
-                },
-                {
-                    question: "can i import my existing portfolio",
-                    answer: "Yes, you can import your existing portfolio by going to the Portfolio section and clicking 'Import Portfolio'. We support imports from CSV files, direct connections to major brokerages, and manual entry options."
-                },
-                {
-                    question: "do you provide ai stock predictions",
-                    answer: "Yes, our Premium and Professional plans include AI-powered market predictions and trend analysis. Our machine learning algorithms analyze thousands of data points to identify potential market movements with proven accuracy rates above industry averages."
-                }
-            ];
+            console.log(message);
+            addMessage(message, 'user');
+            chatInput.value = '';
             
-            chatbotToggle.addEventListener('click', function() {
-                chatbotWindow.classList.add('active');
-                scrollToBottom();
-            });
+            showTypingIndicator();
             
-            chatbotClose.addEventListener('click', function() {
-                chatbotWindow.classList.remove('active');
-            });
-            
-            // Handle sending messages
-            function sendMessage() {
-                const message = chatInput.value.trim();
-                if (message === '') return;
-                
-                // Add user message to chat
-                addMessage(message, 'user');
-                chatInput.value = '';
-                
-                // Show typing indicator
-                showTypingIndicator();
-                
-                // Process the message and respond after a delay
-                setTimeout(() => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', CHATBOT_SERVLET_URL, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
                     removeTypingIndicator();
-                    const response = findAnswer(message);
-                    addMessage(response, 'bot');
-                }, 1000);
-            }
-            
-            // Send message on button click
-            sendBtn.addEventListener('click', sendMessage);
-            
-            // Send message on Enter key
-            chatInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendMessage();
+                    const response = JSON.parse(xhr.responseText);
+                    console.log("response: - ", response);
+                    addMessage(response.response, 'bot');
+                } else if (xhr.readyState === 4) {
+                    removeTypingIndicator();
+                    addMessage("Sorry, there was an error processing your request. Please try again later.", 'bot');
                 }
+            };
+            xhr.send('message=' + encodeURIComponent(message));
+        }
+        
+        sendBtn.addEventListener('click', sendMessage);
+        
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        suggestionChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                const question = this.textContent;
+                chatInput.value = question;
+                sendMessage();
             });
+        });
+        
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
             
-            // Handle suggestion chips
-            suggestionChips.forEach(chip => {
-                chip.addEventListener('click', function() {
-                    const question = this.textContent;
-                    chatInput.value = question;
-                    sendMessage();
-                });
-            });
+            const messageContent = document.createElement('div');
+            messageContent.classList.add('message-content');
+            messageContent.textContent = text;
             
-            // Add message to chat
-            function addMessage(text, sender) {
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', sender);
-                
-                const messageContent = document.createElement('div');
-                messageContent.classList.add('message-content');
-                messageContent.textContent = text;
-                
-                const messageTime = document.createElement('span');
-                messageTime.classList.add('message-time');
-                messageTime.textContent = getCurrentTime();
-                
-                messageDiv.appendChild(messageContent);
-                messageDiv.appendChild(messageTime);
-                
-                messagesContainer.appendChild(messageDiv);
-                scrollToBottom();
+            const messageTime = document.createElement('span');
+            messageTime.classList.add('message-time');
+            messageTime.textContent = getCurrentTime();
+            
+            messageDiv.appendChild(messageContent);
+            messageDiv.appendChild(messageTime);
+            
+            messagesContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        function showTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.classList.add('typing-indicator');
+            indicator.innerHTML = '<span></span><span></span><span></span>';
+            indicator.id = 'typing-indicator';
+            messagesContainer.appendChild(indicator);
+            scrollToBottom();
+        }
+        
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
             }
-            
-            // Show typing indicator
-            function showTypingIndicator() {
-                const indicator = document.createElement('div');
-                indicator.classList.add('typing-indicator');
-                indicator.innerHTML = '<span></span><span></span><span></span>';
-                indicator.id = 'typing-indicator';
-                messagesContainer.appendChild(indicator);
-                scrollToBottom();
-            }
-            
-            // Remove typing indicator
-            function removeTypingIndicator() {
-                const indicator = document.getElementById('typing-indicator');
-                if (indicator) {
-                    indicator.remove();
-                }
-            }
-            
-            // Find answer for a question
-            function findAnswer(question) {
-                // Normalize the question (lowercase, remove punctuation)
-                const normalizedQuestion = question.toLowerCase().replace(/[^\w\s]/g, '');
-                
-                // Find matching Q&A pair
-                for (const pair of qaPairs) {
-                    if (normalizedQuestion.includes(pair.question)) {
-                        return pair.answer;
-                    }
-                }
-                
-                return "I'm sorry, I don't have specific information about that question yet. Please contact our support team for more assistance or try asking about our features, pricing, or how to use StockPro.";
-            }
-            
-            function getCurrentTime() {
-                const now = new Date();
-                let hours = now.getHours();
-                let minutes = now.getMinutes();
-                const ampm = hours >= 12 ? 'PM' : 'AM';
-                
-                hours = hours % 12;
-                hours = hours ? hours : 12; 
-                minutes = minutes < 10 ? '0' + minutes : minutes;
-                
-                return `${hours}:${minutes} ${ampm}`;
-            }
-            
-            function scrollToBottom() {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }
+        }
+        
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+        
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
 });
 
