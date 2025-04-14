@@ -15,4 +15,64 @@
         <name>Microsoft Corporation</name>
         <price>334.75</price>
     </stock>
+    <stock>
+        <symbol>AMZN</symbol>
+        <name>Amazon.com Inc.</name>
+        <price>129.23</price>
+    </stock>
+    <stock>
+        <symbol>TSLA</symbol>
+        <name>Tesla Inc.</name>
+        <price>268.32</price>
+    </stock>
+    <stock>
+        <symbol>NVDA</symbol>
+        <name>NVIDIA Corporation</name>
+        <price>901.45</price>
+    </stock>
+    <stock>
+        <symbol>JNJ</symbol>
+        <name>Johnson and Johnson</name>
+        <price>158.76</price>
+    </stock>
+    <stock>
+        <symbol>JPM</symbol>
+        <name>JPMorgan Chase and Co.</name>
+        <price>187.20</price>
+    </stock>
+    <stock>
+        <symbol>DIS</symbol>
+        <name>The Walt Disney Company</name>
+        <price>106.37</price>
+    </stock>
+    <stock>
+        <symbol>NFLX</symbol>
+        <name>Netflix Inc.</name>
+        <price>616.22</price>
+    </stock>
+    <stock>
+        <symbol>PEP</symbol>
+        <name>PepsiCo Inc.</name>
+        <price>172.88</price>
+    </stock>
+    <stock>
+        <symbol>KO</symbol>
+        <name>The Coca-Cola Company</name>
+        <price>61.55</price>
+    </stock>
+    <stock>
+        <symbol>BA</symbol>
+        <name>Boeing Company</name>
+        <price>192.34</price>
+    </stock>
+    <stock>
+        <symbol>PFE</symbol>
+        <name>Pfizer Inc.</name>
+        <price>27.91</price>
+    </stock>
+    <stock>
+        <symbol>INTC</symbol>
+        <name>Intel Corporation</name>
+        <price>41.83</price>
+    </stock>
 </watchlist>

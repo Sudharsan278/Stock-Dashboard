@@ -34,32 +34,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     fetch("http://localhost/StockDashboard/fetchXMLData.php")
-        .then((response) => response.json())
-        .then((data) => {
-            const stockList = document.querySelector(".stock-list");
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text();
+    })
+    .then(text => {
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error("Invalid JSON response:", text);
+            throw new Error("Invalid JSON response from server");
+        }
+    })
+    .then(data => {
+        const stockList = document.querySelector(".stock-list");
+        
+        if (data.error) {
+            stockList.innerHTML = `<p style="color: red;">${data.error}</p>`;
+            return;
+        }
+        
+        stockList.innerHTML = '';
+        
+        if (data.length > 3) {
+            stockList.style.overflowY = 'auto';
+            stockList.style.maxHeight = '320px';
+        } else {
+            stockList.style.overflowY = 'visible';
+            stockList.style.maxHeight = 'none';
+        }
+        
+        data.forEach(stock => {
+            const priceChange = (Math.random() * 4 - 2).toFixed(2);
+            const isPriceUp = parseFloat(priceChange) >= 0;
             
-            if (data.error) {
-                stockList.innerHTML = `<p style="color: red;">${data.error}</p>`;
-                return;
-            }
-
-            data.forEach(stock => {
-                const stockCard = document.createElement("div");
-                stockCard.className = "stock-card";
-                stockCard.innerHTML = `
-                    <h4>${stock.symbol} - ${stock.name}</h4>
-                    <p>Price: $${stock.price.toFixed(2)}</p>
-                `;
-                stockList.appendChild(stockCard);
+            const stockCard = document.createElement("div");
+            stockCard.className = "stock-card";
+            stockCard.innerHTML = `
+                <h4>${stock.symbol} - ${stock.name}</h4>
+                <p>Price: $${parseFloat(stock.price).toFixed(2)}</p>
+                <p class="${isPriceUp ? 'price-up' : 'price-down'}">
+                    ${isPriceUp ? '▲' : '▼'} ${Math.abs(priceChange)}%
+                </p>
+            `;
+            
+            stockCard.addEventListener('click', () => {
+                console.log(`Clicked on ${stock.symbol}`);
             });
-        })
-        .catch((error) => {
-            console.error("Error loading watchlist:", error);
+            
+            stockList.appendChild(stockCard);
         });
+    })
+    .catch(error => {
+        console.error("Error loading watchlist:", error);
+        const stockList = document.querySelector(".stock-list");
+        stockList.innerHTML = `<p style="color: red;">Error loading stock data. Please try again later.</p>`;
+    });
 
+        
+        
         const loginTime = localStorage.getItem("loginTime");
-
-
         if (username) {
             document.getElementById("username-display").textContent = username;
             const initials = username.split(' ')
