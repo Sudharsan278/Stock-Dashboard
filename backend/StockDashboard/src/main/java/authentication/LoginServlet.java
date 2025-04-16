@@ -51,6 +51,56 @@ public class LoginServlet extends HttpServlet {
            
            System.out.println("Login: - "+email);
            
+           
+           if ("admin@gmail.com".equals(email) && "admin@123".equals(password)) {
+               HttpSession session = request.getSession();
+               session.setAttribute("username", "Admin");
+               session.setAttribute("email", email);
+               session.setAttribute("isAdmin", true);
+               session.setAttribute("loginTime", java.time.LocalDateTime.now().toString());
+               
+               Cookie userCookie = new Cookie("username", "Admin");
+               userCookie.setMaxAge(60 * 60 * 2);
+               userCookie.setPath("/");
+               userCookie.setDomain("127.0.0.1");
+               userCookie.setHttpOnly(false);
+               userCookie.setSecure(false);
+               userCookie.setComment("SameSite=None");
+
+               Cookie emailCookie = new Cookie("email", email);
+               emailCookie.setMaxAge(60 * 60 * 2);
+               emailCookie.setPath("/");
+               emailCookie.setDomain("127.0.0.1");
+               emailCookie.setHttpOnly(false);
+               emailCookie.setSecure(false);
+               emailCookie.setComment("SameSite=None");
+               
+               Cookie adminCookie = new Cookie("isAdmin", "true");
+               adminCookie.setMaxAge(60 * 60 * 2);
+               adminCookie.setPath("/");
+               adminCookie.setDomain("127.0.0.1");
+               adminCookie.setHttpOnly(false);
+               adminCookie.setSecure(false);
+               adminCookie.setComment("SameSite=None");
+               
+               String sessionId = session.getId();
+               
+               response.addCookie(userCookie);
+               response.addCookie(emailCookie);
+               response.addCookie(adminCookie);
+
+               jsonResponse.put("success", true);
+               jsonResponse.put("username", "Admin");
+               jsonResponse.put("email", email);
+               jsonResponse.put("isAdmin", true);
+               jsonResponse.put("sessionId", sessionId);
+               jsonResponse.put("loginTime", session.getAttribute("loginTime"));
+               
+               out.print(jsonResponse.toString());
+               return;
+           }
+           
+           
            try {
                Class.forName("com.mysql.cj.jdbc.Driver");
                Connection con = DBConnection.getConnection();

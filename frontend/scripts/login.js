@@ -15,13 +15,21 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     console.log("Login Response:", data);
 
     if (data.success) {
-        alert("Login successful!");
         console.log(data);
         localStorage.setItem("username", data.username);
         localStorage.setItem("email", data.email);
         localStorage.setItem("loginTime", data.loginTime);
         localStorage.setItem("sessionId", data.sessionId);
-        window.location.href = "home.html";
+        
+        if (data.isAdmin) {
+            localStorage.setItem("isAdmin", "true");
+            alert("Admin login successful!");
+            window.location.href = "admin.html";
+        } else {
+            alert("Login successful!");
+            window.location.href = "home.html";
+        }
+
     } else {
         alert("Login failed: " + data.message);
     }

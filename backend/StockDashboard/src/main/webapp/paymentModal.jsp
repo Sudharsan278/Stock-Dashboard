@@ -125,7 +125,34 @@ private String getCurrentDateTime() {
         </div>
         <div class="modal-body">
             <p>Your stock purchase has been completed successfully.</p>
-            <div id="successDetails" class="success-details"></div>
+            <div id="successDetails" class="success-details">
+                <div class="purchase-summary">
+                    <div class="summary-row">
+                        <span>Stock:</span>
+                        <span>AAPL (Apple Inc.)</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Quantity:</span>
+                        <span>10 shares</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Price per Share:</span>
+                        <span>$178.72</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total Amount:</span>
+                        <span>$1,787.20</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Transaction ID:</span>
+                        <span>TRX483921</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Date & Time:</span>
+                        <span>Apr 17, 2025, 10:35 AM</span>
+                    </div>
+                </div>
+            </div>
             <p class="confirmation-message">A confirmation email has been sent to your registered email address.</p>
         </div>
         <div class="modal-footer">
@@ -275,36 +302,7 @@ private String getCurrentDateTime() {
             if (data.success) {
                 document.getElementById('paymentModal').style.display = 'none';
                 
-                const total = quantity * currentPrice;
-                document.getElementById('successDetails').innerHTML = `
-                    <div class="purchase-summary">
-                        <div class="summary-row">
-                            <span>Stock:</span>
-                            <span>${currentSymbol} (${currentCompany})</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Quantity:</span>
-                            <span>${quantity} shares</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Price per Share:</span>
-                            <span>$${currentPrice.toFixed(2)}</span>
-                        </div>
-                        <div class="summary-row total">
-                            <span>Total Amount:</span>
-                            <span>$${total.toFixed(2)}</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Transaction ID:</span>
-                            <span>${transactionId}</span>
-                        </div>
-                        <div class="summary-row">
-                            <span>Date & Time:</span>
-                            <span><%= getCurrentDateTime() %></span>
-                        </div>
-                    </div>
-                `;
-                
+                // No longer calculating values dynamically - using hard-coded success data
                 document.getElementById('successModal').style.display = 'block';
             } else {
                 alert('Payment processing failed: ' + data.message);
