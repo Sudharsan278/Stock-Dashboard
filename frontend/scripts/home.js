@@ -96,6 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
         
         
         const loginTime = localStorage.getItem("loginTime");
+        const sessionId = localStorage.getItem("sessionId");
         if (username) {
             document.getElementById("username-display").textContent = username;
             const initials = username.split(' ')
@@ -126,6 +127,12 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("login-time").textContent = "Not available";
         }
         
+        if (sessionId) {
+            document.getElementById("session-id").textContent = sessionId;
+        } else {
+            document.getElementById("session-id").textContent = "Not available";
+        }
+
         const userAvatar = document.getElementById("user-avatar");
         const userDropdown = document.getElementById("user-dropdown");
         

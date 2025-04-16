@@ -13,7 +13,6 @@ public class DBConnection {
 	public static Connection getConnection() {
 		
 		Connection conn = null;
-		
 		try {
 			
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -22,8 +21,6 @@ public class DBConnection {
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		
 		return conn;
 	}
 }

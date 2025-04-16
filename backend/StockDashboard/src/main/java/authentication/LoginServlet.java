@@ -88,7 +88,8 @@ public class LoginServlet extends HttpServlet {
                        emailCookie.setHttpOnly(false);
                        emailCookie.setSecure(false);
                        emailCookie.setComment("SameSite=None");
-
+                       
+                       String sessionId = session.getId();
                        
                        response.addCookie(userCookie);
                        response.addCookie(emailCookie);
@@ -96,6 +97,7 @@ public class LoginServlet extends HttpServlet {
                        jsonResponse.put("success", true);
                        jsonResponse.put("username", username);
                        jsonResponse.put("email", email);
+                       jsonResponse.put("sessionId", sessionId);
                        jsonResponse.put("loginTime", session.getAttribute("loginTime"));
 
                        

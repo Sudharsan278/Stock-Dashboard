@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <%!
-
 private String generateTransactionId() {
     return "TRX" + Math.floor(Math.random() * 1000000);
 }
@@ -41,21 +40,21 @@ private String getCurrentDateTime() {
                 <h3>Payment Method</h3>
                 <div class="payment-options">
                     <div class="payment-option">
-                        <input type="radio" id="credit-card" name="payment-method" checked>
+                        <input type="radio" id="credit-card" name="payment-method" value="credit-card" checked>
                         <label for="credit-card">
                             <span class="payment-icon"><i class="far fa-credit-card"></i></span>
                             Credit Card
                         </label>
                     </div>
                     <div class="payment-option">
-                        <input type="radio" id="paypal" name="payment-method">
+                        <input type="radio" id="paypal" name="payment-method" value="paypal">
                         <label for="paypal">
                             <span class="payment-icon"><i class="fab fa-paypal"></i></span>
                             PayPal
                         </label>
                     </div>
                     <div class="payment-option">
-                        <input type="radio" id="bank-transfer" name="payment-method">
+                        <input type="radio" id="bank-transfer" name="payment-method" value="bank-transfer">
                         <label for="bank-transfer">
                             <span class="payment-icon"><i class="fas fa-university"></i></span>
                             Bank Transfer
@@ -233,46 +232,89 @@ private String getCurrentDateTime() {
     
     function processPayment() {
         const quantity = parseInt(document.getElementById('buyQuantity').value) || 1;
+        const transactionId = "<%= generateTransactionId() %>";
+        const paymentMethodRadios = document.getElementsByName('payment-method');
+        let paymentMethod = '';
+        
+        for (let i = 0; i < paymentMethodRadios.length; i++) {
+            if (paymentMethodRadios[i].checked) {
+                paymentMethod = paymentMethodRadios[i].value;
+                break;
+            }
+        }
         
         document.getElementById('processingOverlay').style.display = 'flex';
         
-        setTimeout(() => {
+        // Create a regular form data object
+        const params = new URLSearchParams();
+        params.append('transactionId', transactionId);
+        params.append('symbol', currentSymbol);
+        params.append('companyName', currentCompany);
+        params.append('quantity', quantity.toString());
+        params.append('price', currentPrice.toString());
+        params.append('paymentMethod', paymentMethod);
+        
+        // Add card details if payment method is credit card
+        if (paymentMethod === 'credit-card') {
+            params.append('cardNumber', document.getElementById('cardNumber').value);
+            params.append('cardHolder', document.getElementById('cardName').value);
+        }
+        
+        // Send AJAX request to process payment
+        fetch('processPayment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params.toString()
+        })
+        .then(response => response.json())
+        .then(data => {
             document.getElementById('processingOverlay').style.display = 'none';
             
-            document.getElementById('paymentModal').style.display = 'none';
-            
-            const total = quantity * currentPrice;
-            document.getElementById('successDetails').innerHTML = `
-                <div class="purchase-summary">
-                    <div class="summary-row">
-                        <span>Stock:</span>
-                        <span>${currentSymbol} (${currentCompany})</span>
+            if (data.success) {
+                document.getElementById('paymentModal').style.display = 'none';
+                
+                const total = quantity * currentPrice;
+                document.getElementById('successDetails').innerHTML = `
+                    <div class="purchase-summary">
+                        <div class="summary-row">
+                            <span>Stock:</span>
+                            <span>${currentSymbol} (${currentCompany})</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Quantity:</span>
+                            <span>${quantity} shares</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Price per Share:</span>
+                            <span>$${currentPrice.toFixed(2)}</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total Amount:</span>
+                            <span>$${total.toFixed(2)}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Transaction ID:</span>
+                            <span>${transactionId}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Date & Time:</span>
+                            <span><%= getCurrentDateTime() %></span>
+                        </div>
                     </div>
-                    <div class="summary-row">
-                        <span>Quantity:</span>
-                        <span>${quantity} shares</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Price per Share:</span>
-                        <span>$${currentPrice.toFixed(2)}</span>
-                    </div>
-                    <div class="summary-row total">
-                        <span>Total Amount:</span>
-                        <span>$${total.toFixed(2)}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Transaction ID:</span>
-                        <span><%= generateTransactionId() %></span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Date & Time:</span>
-                        <span><%= getCurrentDateTime() %></span>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('successModal').style.display = 'block';
-        }, 3000);
+                `;
+                
+                document.getElementById('successModal').style.display = 'block';
+            } else {
+                alert('Payment processing failed: ' + data.message);
+            }
+        })
+        .catch(error => {
+            document.getElementById('processingOverlay').style.display = 'none';
+            console.error('Error processing payment:', error);
+            alert('Error processing payment: ' + error);
+        });
     }
     
     function formatCardNumber(input) {

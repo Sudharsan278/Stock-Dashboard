@@ -953,3 +953,9 @@ section > p {
         transform: translateY(-4px);
     }
 }
+
+.session-id {
+    font-size: 0.8rem;
+    color: white;
+    margin-top: 5px;
+}

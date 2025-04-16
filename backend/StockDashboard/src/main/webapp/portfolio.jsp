@@ -229,20 +229,39 @@
             });
             
             document.getElementById('expDate').addEventListener('blur', function() {
-                const expDate = this.value;
-                const expDatePattern = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
-                let expDateValid = expDatePattern.test(expDate);
+                const expDate = this.value.trim();
+                const errorElement = document.getElementById('expDateError');
                 
-                if (expDateValid) {
-                    const [month, year] = expDate.split('/');
-                    const expiry = new Date(2000 + parseInt(year), parseInt(month) - 1);
-                    const today = new Date();
-                    expDateValid = expiry > today;
+                // Check if format is correct (MM/YY)
+                const expDatePattern = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+                if (!expDatePattern.test(expDate)) {
+                    showError('expDate', 'expDateError', true);
+                    errorElement.textContent = "Please enter a valid format (MM/YY)";
+                    return;
                 }
                 
-                showError('expDate', 'expDateError', !expDateValid);
+                // Check if date is in the future
+                const [month, year] = expDate.split('/');
+                const currentDate = new Date();
+                const currentYear = currentDate.getFullYear() % 100; // Get last 2 digits
+                const currentMonth = currentDate.getMonth() + 1; // Jan is 0
+                
+                // Convert to numbers for comparison
+                const expMonth = parseInt(month, 10);
+                const expYear = parseInt(year, 10);
+                
+                // Add debugging to see what's being compared
+                console.log(`Comparing: Exp: ${expMonth}/${expYear} vs Current: ${currentMonth}/${currentYear}`);
+                
+                // Check if expiry date is in the future
+                const isValid = (expYear > currentYear) || 
+                                (expYear === currentYear && expMonth >= currentMonth);
+                
+                showError('expDate', 'expDateError', !isValid);
+                if (!isValid) {
+                    errorElement.textContent = "Expiry date must be in the future";
+                }
             });
-            
             document.getElementById('cvv').addEventListener('blur', function() {
                 const cvv = this.value;
                 const cvvValid = /^[0-9]{3,4}$/.test(cvv);

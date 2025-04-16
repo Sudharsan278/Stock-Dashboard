@@ -20,6 +20,7 @@ document.getElementById("loginForm").addEventListener("submit", async function (
         localStorage.setItem("username", data.username);
         localStorage.setItem("email", data.email);
         localStorage.setItem("loginTime", data.loginTime);
+        localStorage.setItem("sessionId", data.sessionId);
         window.location.href = "home.html";
     } else {
         alert("Login failed: " + data.message);
