@@ -2,121 +2,148 @@ package portfolio;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.JSONObject;
 
 @WebServlet("/processPayment")
 public class PaymentServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
-    public PaymentServlet() {
-        super();
-    }
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/stock_dashboard";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "2782004";  
     
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
+        response.setContentType("application/json");
+        JSONObject jsonResponse = new JSONObject();
+        
         try {
-        	System.out.println("Received parameters:");
-        	for (String paramName : request.getParameterMap().keySet()) {
-        	    System.out.println(paramName + ": " + request.getParameter(paramName));
-        	}
-            // Extract payment details from request
             String transactionId = request.getParameter("transactionId");
-            String stockSymbol = request.getParameter("symbol");
+            String symbol = request.getParameter("symbol");
             String companyName = request.getParameter("companyName");
-            String quantityStr = request.getParameter("quantity");          
-            int quantity = 0; // Default value
-
-            if (quantityStr != null && !quantityStr.isEmpty()) {
-                quantity = Integer.parseInt(quantityStr);
-            } else {
-                throw new ServletException("Quantity parameter is required");
-            }
-            String priceStr = request.getParameter("price");
-            double pricePerShare = 0.0;
-
-            if (priceStr != null && !priceStr.isEmpty()) {
-                pricePerShare = Double.parseDouble(priceStr);
-            } else {
-                throw new ServletException("Price parameter is required");
-            }
-            double totalAmount = quantity * pricePerShare;
+            int quantity = Integer.parseInt(request.getParameter("quantity"));
+            double price = Double.parseDouble(request.getParameter("price"));
+            double totalAmount = Double.parseDouble(request.getParameter("totalAmount"));
             String paymentMethod = request.getParameter("paymentMethod");
+            String paymentDate = request.getParameter("paymentDate");
             
-            // Card details (in production, these should be encrypted)
-            String cardNumber = request.getParameter("cardNumber");
-            String cardHolder = request.getParameter("cardHolder");
+            String additionalDetails = "";
             
-            // For security, we'll only store the last 4 digits of the card number
-            if (cardNumber != null && cardNumber.length() > 4) {
-                cardNumber = "XXXX-XXXX-XXXX-" + cardNumber.substring(cardNumber.length() - 4);
+            switch(paymentMethod) {
+                case "credit-card":
+                    String cardNumber = request.getParameter("cardNumber"); 
+                    String cardHolder = request.getParameter("cardHolder");
+                    additionalDetails = "Card ending in " + cardNumber + ", Holder: " + cardHolder;
+                    break;
+                    
+                case "upi":
+                    additionalDetails = "UPI Transaction";
+                    break;
+                    
+                case "bank-transfer":
+                    String senderAccountNumber = request.getParameter("senderAccountNumber");
+                    String senderIfscCode = request.getParameter("senderIfscCode");
+                    additionalDetails = "Account: " + senderAccountNumber + ", IFSC: " + senderIfscCode;
+                    break;
             }
             
-            // Store payment details in database
-            storePaymentTransaction(transactionId, stockSymbol, companyName, quantity, 
-                                   pricePerShare, totalAmount, paymentMethod, cardNumber, cardHolder);
+            boolean paymentSaved = savePaymentToDatabase(
+                transactionId, 
+                symbol, 
+                companyName, 
+                quantity, 
+                price, 
+                totalAmount, 
+                paymentMethod, 
+                paymentDate,
+                additionalDetails
+            );
             
-            // Send success response
-            response.setContentType("application/json");
-            response.getWriter().write("{\"success\":true,\"message\":\"Payment processed successfully\"}");
+            if (paymentSaved) {
+                // Add the stock to user's portfolio if payment is successful
+                // This assumes the PortfolioServlet already has a method to add stocks
+                // and the stocks are stored in a session attribute
+                
+                // You'd need to implement the actual stock add logic here or call the relevant method
+                
+                jsonResponse.put("success", true);
+                jsonResponse.put("message", "Payment processed successfully");
+            } else {
+                jsonResponse.put("success", false);
+                jsonResponse.put("message", "Failed to save payment information");
+            }
             
         } catch (Exception e) {
+            jsonResponse.put("success", false);
+            jsonResponse.put("message", "Error processing payment: " + e.getMessage());
             e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"success\":false,\"message\":\"Error processing payment: " + e.getMessage() + "\"}");
         }
+        
+        response.getWriter().write(jsonResponse.toString());
     }
     
-    private void storePaymentTransaction(String transactionId, String stockSymbol, 
-            String companyName, int quantity, double pricePerShare, double totalAmount, 
-            String paymentMethod, String cardNumber, String cardHolder) throws SQLException {
+    private boolean savePaymentToDatabase(
+            String transactionId, 
+            String symbol, 
+            String companyName, 
+            int quantity, 
+            double price, 
+            double totalAmount, 
+            String paymentMethod, 
+            String paymentDate,
+            String additionalDetails) {
         
         Connection conn = null;
-        PreparedStatement pstmt = null;
+        PreparedStatement stmt = null;
         
         try {
-            // Get connection from DatabaseConnection utility
-            conn = DatabaseConnection.getConnection();
+            // Load the MySQL JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
             
-            // Prepare SQL statement
-            String sql = "INSERT INTO payment_transactions (transaction_id, stock_symbol, company_name, " +
-                         "quantity, price_per_share, total_amount, payment_method, card_number, card_holder) " +
+            // Establish connection to the database
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            
+            // SQL statement to insert payment record
+            String sql = "INSERT INTO payments (transaction_id, stock_symbol, company_name, quantity, " +
+                         "price_per_share, total_amount, payment_method, payment_date, additional_details) " +
                          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, transactionId);
-            pstmt.setString(2, stockSymbol);
-            pstmt.setString(3, companyName);
-            pstmt.setInt(4, quantity);
-            pstmt.setDouble(5, pricePerShare);
-            pstmt.setDouble(6, totalAmount);
-            pstmt.setString(7, paymentMethod);
-            pstmt.setString(8, cardNumber);
-            pstmt.setString(9, cardHolder);
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, transactionId);
+            stmt.setString(2, symbol);
+            stmt.setString(3, companyName);
+            stmt.setInt(4, quantity);
+            stmt.setDouble(5, price);
+            stmt.setDouble(6, totalAmount);
+            stmt.setString(7, paymentMethod);
+            stmt.setString(8, paymentDate);
+            stmt.setString(9, additionalDetails);
             
-            // Execute the statement
-            pstmt.executeUpdate();
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
             
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return false;
         } finally {
             // Close resources
-            if (pstmt != null) {
-                try {
-                    pstmt.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            
-            // Close connection using utility
-            DatabaseConnection.closeConnection(conn);
         }
     }
 }
