@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check admin authentication
     const isAdmin = localStorage.getItem('isAdmin') === 'true' || 
                     document.cookie.split('; ').find(row => row.startsWith('isAdmin='))?.split('=')[1] === 'true';
 
@@ -9,11 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Set admin name
     const adminName = document.getElementById('admin-name');
     adminName.textContent = localStorage.getItem('username') || 'Admin';
     
-    // Card navigation
     const usersCard = document.getElementById('users-card');
     const queriesCard = document.getElementById('queries-card');
     const usersData = document.getElementById('users-data');
@@ -35,15 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         loadQueries();
     });
     
-    // Load users by default
     usersCard.click();
     
-    // Event listeners for refresh buttons
     document.getElementById('refresh-users-btn').addEventListener('click', loadUsers);
     document.getElementById('refresh-queries-btn').addEventListener('click', loadQueries);
     document.getElementById('logout-btn').addEventListener('click', logout);
     
-    // Modal setup for users
     const editModal = document.getElementById('edit-modal');
     const closeEditBtn = editModal.querySelector('.close-btn');
     const editForm = document.getElementById('edit-form');
@@ -54,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const confirmDelete = document.getElementById('confirm-delete');
     const cancelDelete = document.getElementById('cancel-delete');
     
-    // Close modal buttons
+    
     closeEditBtn.addEventListener('click', () => {
         editModal.style.display = 'none';
     });
@@ -71,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteConfirm.style.display = 'none';
     });
     
-    // Form submissions
     editForm.addEventListener('submit', function(event) {
         event.preventDefault();
         updateUser();
@@ -82,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
         deleteUser(userId);
     });
     
-    // Close modals when clicking outside
     window.addEventListener('click', function(event) {
         if (event.target === editModal) {
             editModal.style.display = 'none';
@@ -103,7 +95,9 @@ async function loadUsers() {
             credentials: 'include'
         });
         
+        console.log(response);
         const data = await response.json();
+        console.log(data);
         
         if (data.success) {
             displayUsers(data.users);
@@ -147,7 +141,6 @@ function displayUsers(users) {
         usersList.appendChild(row);
     });
     
-    // Add event listeners to the new buttons
     document.querySelectorAll('.edit-btn').forEach(button => {
         button.addEventListener('click', function() {
             openEditModal(this.dataset.id, this.dataset.name, this.dataset.email);
@@ -290,7 +283,6 @@ function logout() {
     localStorage.removeItem('sessionId');
     localStorage.removeItem('isAdmin');
     
-    // Clear any relevant cookies
     document.cookie = 'isAdmin=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     document.cookie = 'sessionId=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     

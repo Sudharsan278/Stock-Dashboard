@@ -86,7 +86,6 @@ public class AdminServlet extends HttpServlet {
         JSONObject jsonResponse = new JSONObject();
         
         try {
-            // Read the request body for PUT requests
             StringBuilder buffer = new StringBuilder();
             BufferedReader reader = request.getReader();
             String line;
@@ -94,13 +93,11 @@ public class AdminServlet extends HttpServlet {
                 buffer.append(line);
             }
             
-            // Parse the form data from the request body
             String body = buffer.toString();
             Map<String, String> parameters = parseFormData(body);
             
-            // Get parameters from the parsed map
             String idStr = parameters.get("id");
-            int id = Integer.parseInt(idStr); // Now this should have a value
+            int id = Integer.parseInt(idStr); 
             
             String name = parameters.get("name");
             String email = parameters.get("email");
@@ -108,7 +105,7 @@ public class AdminServlet extends HttpServlet {
             
             System.out.println(id + " " + name + " " + email + " " + password);
             
-            // Rest of your code remains the same...
+            
             Connection con = DBConnection.getConnection();
 
             String sql;
@@ -151,7 +148,7 @@ public class AdminServlet extends HttpServlet {
         out.print(jsonResponse.toString());
     }
 
-    // Helper method to parse form data from request body
+   
     private Map<String, String> parseFormData(String formData) {
         Map<String, String> map = new HashMap<>();
         String[] pairs = formData.split("&");

@@ -116,6 +116,7 @@ public class LoginServlet extends HttpServlet {
             	   
             	   if (BCrypt.checkpw(password, hashedPassword)) {
                        String username = rs.getString("NAME");
+                       System.out.println(username);
                        
                        
                        HttpSession session = request.getSession();

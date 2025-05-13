@@ -472,7 +472,6 @@ private String getCurrentDateTime() {
                 break;
         }
         
-        // Send AJAX request to process payment
         fetch('processPayment', {
             method: 'POST',
             headers: {
